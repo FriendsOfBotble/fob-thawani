@@ -2,11 +2,11 @@
 
 namespace FriendsOfBotble\Thawani\Http\Controllers;
 
-use FriendsOfBotble\Thawani\Services\Thawani;
 use Botble\Base\Http\Controllers\BaseController;
 use Botble\Base\Http\Responses\BaseHttpResponse;
 use Botble\Payment\Enums\PaymentStatusEnum;
 use Botble\Payment\Supports\PaymentHelper;
+use FriendsOfBotble\Thawani\Services\Thawani;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Throwable;
@@ -15,7 +15,7 @@ class ThawaniController extends BaseController
 {
     public function getCallback(Request $request, BaseHttpResponse $response, Thawani $thawani): BaseHttpResponse
     {
-        $orderIds = (array)$request->input('order_ids');
+        $orderIds = (array) $request->input('order_ids');
 
         $referenceId = $request->input('reference_id');
 
@@ -39,8 +39,14 @@ class ThawaniController extends BaseController
                     'order_id' => $orderIds,
                 ], $request);
 
+                $nextUrl = PaymentHelper::getRedirectURL();
+
+                if (is_plugin_active('job-board')) {
+                    $nextUrl = $nextUrl . '?charge_id=' . $paymentResponse['data'][0]['payment_id'];
+                }
+
                 return $response
-                    ->setNextUrl(PaymentHelper::getRedirectURL())
+                    ->setNextUrl($nextUrl)
                     ->setMessage(__('Checkout successfully!'));
             }
 

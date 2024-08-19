@@ -4,7 +4,8 @@ namespace FriendsOfBotble\Thawani\Providers;
 
 use FriendsOfBotble\Thawani\Services\Gateways\ThawaniPaymentService;
 use FriendsOfBotble\Thawani\Services\Thawani;
-use Botble\Ecommerce\Models\Currency;
+use Botble\Ecommerce\Models\Currency as CurrencyEcommerce;
+use Botble\JobBoard\Models\Currency as CurrencyJobBoard;
 use Botble\Payment\Enums\PaymentMethodEnum;
 use Exception;
 use Html;
@@ -104,7 +105,8 @@ class HookServiceProvider extends ServiceProvider
         $paymentData = apply_filters(PAYMENT_FILTER_PAYMENT_DATA, [], $request);
 
         if (strtoupper($currentCurrency->title) !== 'OMR') {
-            $supportedCurrency = Currency::query()->where('title', 'OMR')->first();
+            $currency = is_plugin_active('ecommerce') ? CurrencyEcommerce::class : CurrencyJobBoard::class;
+            $supportedCurrency = $currency::query()->where('title', 'OMR')->first();
 
             if ($supportedCurrency) {
                 $paymentData['currency'] = strtoupper($supportedCurrency->title);

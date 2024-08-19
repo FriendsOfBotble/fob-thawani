@@ -15,6 +15,10 @@ class ThawaniServiceProvider extends ServiceProvider
             return;
         }
 
+        if (! is_plugin_active('ecommerce') && ! is_plugin_active('job-board')) {
+            return;
+        }
+
         $this->setNamespace('plugins/thawani')
             ->loadHelpers()
             ->loadRoutes()
