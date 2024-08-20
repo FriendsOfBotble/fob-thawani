@@ -6,6 +6,7 @@ use FriendsOfBotble\Thawani\Services\Gateways\ThawaniPaymentService;
 use FriendsOfBotble\Thawani\Services\Thawani;
 use Botble\Ecommerce\Models\Currency as CurrencyEcommerce;
 use Botble\JobBoard\Models\Currency as CurrencyJobBoard;
+use Botble\RealEstate\Models\Currency as CurrencyRealEstate;
 use Botble\Payment\Enums\PaymentMethodEnum;
 use Exception;
 use Html;
@@ -105,7 +106,13 @@ class HookServiceProvider extends ServiceProvider
         $paymentData = apply_filters(PAYMENT_FILTER_PAYMENT_DATA, [], $request);
 
         if (strtoupper($currentCurrency->title) !== 'OMR') {
-            $currency = is_plugin_active('ecommerce') ? CurrencyEcommerce::class : CurrencyJobBoard::class;
+            $currency = match (true) {
+                is_plugin_active('ecommerce') => CurrencyEcommerce::class,
+                is_plugin_active('job-board') => CurrencyJobBoard::class,
+                is_plugin_active('real-estate') => CurrencyRealEstate::class,
+                default => null,
+            };
+
             $supportedCurrency = $currency::query()->where('title', 'OMR')->first();
 
             if ($supportedCurrency) {
