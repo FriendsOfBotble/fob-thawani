@@ -1,5 +1,5 @@
 {
-    "id": "friendsofbotble/thawani",
+    "id": "friendsofbotble/fob-thawani",
     "name": "Thawani Payment Gateway",
     "namespace": "FriendsOfBotble\\Thawani\\",
     "provider": "FriendsOfBotble\\Thawani\\Providers\\ThawaniServiceProvider",
